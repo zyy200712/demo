@@ -1,4 +1,13 @@
+/**
+ * @class VUMeterProcessor
+ * @extends AudioWorkletProcessor
+ * @description Calculates and outputs the volume level (RMS) of an audio stream at regular intervals.
+ */
 class VUMeterProcessor extends AudioWorkletProcessor {
+    /**
+     * @constructor
+     * @description Initializes the volume meter with default settings.
+     */
     constructor() {
         super();
         this._volume = 0;
@@ -7,10 +16,21 @@ class VUMeterProcessor extends AudioWorkletProcessor {
         this._updateIntervalInFrames = this._updateIntervalInMS / 1000 * sampleRate;
     }
 
+    /**
+     * @method intervalInFrames
+     * @returns {number} The update interval in frames.
+     */
     get intervalInFrames() {
         return this._updateIntervalInFrames;
     }
 
+    /**
+     * @method process
+     * @description Processes the audio input data and calculates the volume level.
+     * @param {Float32Array[][]} inputs - The input audio data.
+     * @param {Float32Array[][]} outputs - The output audio data.
+     * @returns {boolean} True to keep the worklet alive.
+     */
     process(inputs, outputs) {
         const input = inputs[0];
         const output = outputs[0];

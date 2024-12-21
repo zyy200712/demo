@@ -3,11 +3,13 @@ import { ApplicationError, ErrorCodes } from '../utils/error-boundary.js';
 import { CONFIG } from '../config/config.js';
 
 /**
- * Handles audio recording functionality with configurable sample rate
+ * @class AudioRecorder
+ * @description Handles audio recording functionality with configurable sample rate
  * and real-time audio processing through WebAudio API.
  */
 export class AudioRecorder {
     /**
+     * @constructor
      * @param {number} sampleRate - The sample rate for audio recording (default: 16000)
      */
     constructor(sampleRate = CONFIG.AUDIO.SAMPLE_RATE) {
@@ -28,9 +30,11 @@ export class AudioRecorder {
     }
 
     /**
-     * Starts audio recording with the specified callback for audio data
-     * @param {Function} onAudioData - Callback function for processed audio data
-     * @throws {Error} If unable to access microphone or set up audio processing
+     * @method start
+     * @description Starts audio recording with the specified callback for audio data.
+     * @param {Function} onAudioData - Callback function for processed audio data.
+     * @throws {Error} If unable to access microphone or set up audio processing.
+     * @async
      */
     async start(onAudioData) {
         this.onAudioData = onAudioData;
@@ -69,7 +73,9 @@ export class AudioRecorder {
     }
 
     /**
-     * Stops the current recording session and cleans up resources
+     * @method stop
+     * @description Stops the current recording session and cleans up resources.
+     * @throws {ApplicationError} If an error occurs during stopping the recording.
      */
     stop() {
         try {
@@ -97,7 +103,11 @@ export class AudioRecorder {
     }
 
     /**
-     * Converts ArrayBuffer to Base64 string
+     * @method arrayBufferToBase64
+     * @description Converts ArrayBuffer to Base64 string.
+     * @param {ArrayBuffer} buffer - The ArrayBuffer to convert.
+     * @returns {string} The Base64 representation of the ArrayBuffer.
+     * @throws {ApplicationError} If an error occurs during conversion.
      * @private
      */
     arrayBufferToBase64(buffer) {
@@ -119,7 +129,9 @@ export class AudioRecorder {
     }
 
     /**
-     * Checks if the browser supports required audio APIs
+     * @method checkBrowserSupport
+     * @description Checks if the browser supports required audio APIs.
+     * @throws {ApplicationError} If the browser does not support audio recording.
      * @private
      */
     checkBrowserSupport() {

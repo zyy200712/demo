@@ -1,10 +1,25 @@
+/**
+ * @class AudioProcessingWorklet
+ * @extends AudioWorkletProcessor
+ * @description Processes incoming audio data, converting it from Float32 to Int16 format and packaging it into chunks.
+ */
 class AudioProcessingWorklet extends AudioWorkletProcessor {
+    /**
+     * @constructor
+     * @description Initializes the buffer for audio processing.
+     */
     constructor() {
         super();
         this.buffer = new Int16Array(2048);
         this.bufferWriteIndex = 0;
     }
 
+    /**
+     * @method process
+     * @description Processes the audio input data.
+     * @param {Float32Array[][]} inputs - The input audio data.
+     * @returns {boolean} True to keep the worklet alive.
+     */
     process(inputs) {
         if (inputs[0].length) {
             const channel0 = inputs[0][0];
@@ -13,6 +28,10 @@ class AudioProcessingWorklet extends AudioWorkletProcessor {
         return true;
     }
 
+    /**
+     * @method sendAndClearBuffer
+     * @description Sends the current buffer content as a message and resets the buffer.
+     */
     sendAndClearBuffer() {
         this.port.postMessage({
             event: 'chunk',
@@ -23,6 +42,11 @@ class AudioProcessingWorklet extends AudioWorkletProcessor {
         this.bufferWriteIndex = 0;
     }
 
+    /**
+     * @method processChunk
+     * @description Processes a chunk of audio data, converting it to Int16 format.
+     * @param {Float32Array} float32Array - The audio data chunk to process.
+     */
     processChunk(float32Array) {
         try {
             const l = float32Array.length;

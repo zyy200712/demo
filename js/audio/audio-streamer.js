@@ -1,6 +1,14 @@
 import { registeredWorklets } from '../core/worklet-registry.js';
 
+/**
+ * @class AudioStreamer
+ * @description Manages the playback of audio data, including support for queuing, scheduling, and applying audio effects through worklets.
+ */
 export class AudioStreamer {
+    /**
+     * @constructor
+     * @param {AudioContext} context - The AudioContext instance to use for audio processing.
+     */
     constructor(context) {
         this.context = context;
         this.audioQueue = [];
@@ -20,6 +28,15 @@ export class AudioStreamer {
         this.addPCM16 = this.addPCM16.bind(this);
     }
 
+    /**
+     * @method addWorklet
+     * @description Adds an audio worklet to the processing pipeline.
+     * @param {string} workletName - The name of the worklet.
+     * @param {string} workletSrc - The source URL of the worklet script.
+     * @param {Function} handler - The message handler function for the worklet.
+     * @returns {Promise<AudioStreamer>} A promise that resolves with the AudioStreamer instance when the worklet is added.
+     * @async
+     */
     async addWorklet(workletName, workletSrc, handler) {
         let workletsRecord = registeredWorklets.get(this.context);
         if (workletsRecord && workletsRecord[workletName]) {
@@ -48,6 +65,11 @@ export class AudioStreamer {
         return this;
     }
 
+    /**
+     * @method addPCM16
+     * @description Adds a chunk of PCM16 audio data to the streaming queue.
+     * @param {Int16Array} chunk - The audio data chunk.
+     */
     addPCM16(chunk) {
         const float32Array = new Float32Array(chunk.length / 2);
         const dataView = new DataView(chunk.buffer);
@@ -79,12 +101,22 @@ export class AudioStreamer {
         }
     }
 
+    /**
+     * @method createAudioBuffer
+     * @description Creates an AudioBuffer from the given audio data.
+     * @param {Float32Array} audioData - The audio data.
+     * @returns {AudioBuffer} The created AudioBuffer.
+     */
     createAudioBuffer(audioData) {
         const audioBuffer = this.context.createBuffer(1, audioData.length, this.sampleRate);
         audioBuffer.getChannelData(0).set(audioData);
         return audioBuffer;
     }
 
+    /**
+     * @method scheduleNextBuffer
+     * @description Schedules the next audio buffer for playback.
+     */
     scheduleNextBuffer() {
         const SCHEDULE_AHEAD_TIME = 0.2;
 
@@ -154,6 +186,10 @@ export class AudioStreamer {
         }
     }
 
+    /**
+     * @method stop
+     * @description Stops the audio stream.
+     */
     stop() {
         this.isPlaying = false;
         this.isStreamComplete = true;
@@ -175,6 +211,11 @@ export class AudioStreamer {
         }, 200);
     }
 
+    /**
+     * @method resume
+     * @description Resumes the audio stream if the AudioContext was suspended.
+     * @async
+     */
     async resume() {
         if (this.context.state === 'suspended') {
             await this.context.resume();
@@ -184,6 +225,10 @@ export class AudioStreamer {
         this.gainNode.gain.setValueAtTime(1, this.context.currentTime);
     }
 
+    /**
+     * @method complete
+     * @description Marks the audio stream as complete and schedules any remaining data in the buffer.
+     */
     complete() {
         this.isStreamComplete = true;
         if (this.processingBuffer.length > 0) {
