@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Defines an error boundary for handling various types of errors in the application.
+ * It provides a set of predefined error codes and an ApplicationError class for consistent error handling.
+ */
+
+/**
+ * Enumeration of error codes for different types of errors.
+ * @enum {string}
+ */
 export const ErrorCodes = {
     // Audio related errors
     AUDIO_DEVICE_NOT_FOUND: 'AUDIO_DEVICE_NOT_FOUND',
@@ -39,7 +48,18 @@ export const ErrorCodes = {
     SCREEN_STOP_FAILED: 'SCREEN_STOP_FAILED',
 };
 
+/**
+ * Custom error class for application-specific errors.
+ * Extends the built-in Error class and adds properties for error code, details, and timestamp.
+ */
 export class ApplicationError extends Error {
+    /**
+     * Creates a new ApplicationError.
+     *
+     * @param {string} message - The error message.
+     * @param {string} [code=ErrorCodes.UNKNOWN_ERROR] - The error code.
+     * @param {Object} [details={}] - Additional details about the error.
+     */
     constructor(message, code = ErrorCodes.UNKNOWN_ERROR, details = {}) {
         super(message);
         this.name = 'ApplicationError';
@@ -53,6 +73,11 @@ export class ApplicationError extends Error {
         }
     }
 
+    /**
+     * Converts the error object to a JSON representation.
+     *
+     * @returns {Object} The JSON representation of the error.
+     */
     toJSON() {
         return {
             name: this.name,
