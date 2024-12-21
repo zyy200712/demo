@@ -1,1 +1,5 @@
 - Polish code
+- Lint code properly as indentaion and all of that is not consistent
+- Add feature to enable/disable tools
+- Add feature to hide console logs
+- There are some bugs, create issues for them
