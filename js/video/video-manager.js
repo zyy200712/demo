@@ -3,6 +3,10 @@ import { VideoRecorder } from './video-recorder.js';
 import { ApplicationError, ErrorCodes } from '../utils/error-boundary.js';
 
 /**
+ * @fileoverview Manages video capture and processing with motion detection and frame preview.
+ */
+
+/**
  * Manages video capture and processing with motion detection and frame preview
  * @class VideoManager
  */
@@ -189,4 +193,4 @@ export class VideoManager {
         this.lastSignificantFrame = null;
         this.frameCount = 0;
     }
-} 
+}

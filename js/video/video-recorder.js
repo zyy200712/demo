@@ -1,7 +1,20 @@
 import { Logger } from '../utils/logger.js';
 import { ApplicationError, ErrorCodes } from '../utils/error-boundary.js';
 
+/**
+ * @fileoverview Implements a video recorder for capturing and processing video frames from a camera.
+ * It supports previewing the video and sending frames to a callback function.
+ */
 export class VideoRecorder {
+    /**
+     * Creates a new VideoRecorder instance.
+     * @param {Object} [options] - Configuration options for the recorder.
+     * @param {number} [options.fps=15] - Frames per second for video capture.
+     * @param {number} [options.quality=0.7] - JPEG quality for captured frames (0.0 - 1.0).
+     * @param {number} [options.width=640] - Width of the captured video.
+     * @param {number} [options.height=480] - Height of the captured video.
+     * @param {number} [options.maxFrameSize=102400] - Maximum size of a frame in bytes (100KB).
+     */
     constructor(options = {}) {
         this.stream = null;
         this.previewElement = null;
@@ -21,6 +34,12 @@ export class VideoRecorder {
         this.frameCount = 0; // Add frame counter for debugging
     }
 
+    /**
+     * Starts video recording.
+     * @param {HTMLVideoElement} previewElement - The video element to display the video preview.
+     * @param {Function} onVideoData - Callback function to receive video frame data.
+     * @throws {ApplicationError} Throws an error if the video recording fails to start.
+     */
     async start(previewElement, onVideoData) {
         try {
             this.previewElement = previewElement;
@@ -58,6 +77,10 @@ export class VideoRecorder {
         }
     }
 
+    /**
+     * Starts the frame capture loop.
+     * @private
+     */
     startFrameCapture() {
         const frameInterval = 1000 / this.options.fps;
         
@@ -100,6 +123,10 @@ export class VideoRecorder {
         Logger.info(`Video capture started at ${this.options.fps} FPS`);
     }
 
+    /**
+     * Stops video recording.
+     * @throws {ApplicationError} Throws an error if the video recording fails to stop.
+     */
     stop() {
         try {
             this.isRecording = false;
@@ -130,6 +157,12 @@ export class VideoRecorder {
         }
     }
 
+    /**
+     * Checks if video recording is supported by the browser.
+     * @returns {boolean} True if video recording is supported, false otherwise.
+     * @throws {ApplicationError} Throws an error if video recording is not supported.
+     * @static
+     */
     static checkBrowserSupport() {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             throw new ApplicationError(
@@ -140,6 +173,12 @@ export class VideoRecorder {
         return true;
     }
 
+    /**
+     * Validates a captured frame.
+     * @param {string} base64Data - Base64 encoded frame data.
+     * @returns {boolean} True if the frame is valid, false otherwise.
+     * @private
+     */
     validateFrame(base64Data) {
         // Check if it's a valid base64 string
         if (!/^[A-Za-z0-9+/=]+$/.test(base64Data)) {
@@ -156,6 +195,12 @@ export class VideoRecorder {
         return true;
     }
 
+    /**
+     * Optimizes the frame quality to reduce size.
+     * @param {string} base64Data - Base64 encoded frame data.
+     * @returns {string} Optimized base64 encoded frame data.
+     * @private
+     */
     async optimizeFrameQuality(base64Data) {
         let quality = this.options.quality;
         let currentSize = base64Data.length;
