@@ -16,19 +16,6 @@ export const CONFIG = {
         BUFFER_SIZE: 2048,
         CHANNELS: 1
     },
-    UI: {
-        LOG_LEVELS: {
-            SYSTEM: 'system',
-            USER: 'user',
-            AI: 'ai'
-        },
-        // Emojis for console log
-        EMOJIS: {
-            SYSTEM: '⚙️',
-            USER: '🧑',
-            AI: '🤖'
-        }
-    },
     TOOLS: {
         // Add tool-specific configurations here if needed
     },
