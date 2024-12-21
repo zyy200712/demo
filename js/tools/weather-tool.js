@@ -1,6 +1,16 @@
 import { Logger } from '../utils/logger.js';
 
+/**
+ * Represents a tool for retrieving weather forecasts.
+ * This tool provides a mock implementation for demonstration purposes.
+ */
 export class WeatherTool {
+    /**
+     * Returns the tool declaration for the Gemini API.
+     * The declaration defines the function name, description, and parameters.
+     *
+     * @returns {Object[]} An array containing the function declaration for getting weather on a specific date.
+     */
     getDeclaration() {
         // Return an array of function declarations
         return [{
@@ -23,6 +33,16 @@ export class WeatherTool {
         }];
     }
 
+    /**
+     * Executes the weather tool.
+     * Generates a mock weather forecast based on the provided location and date.
+     *
+     * @param {Object} args - The arguments for the tool.
+     * @param {string} args.location - The location for the weather forecast.
+     * @param {string} args.date - The date for the weather forecast (YYYY-MM-DD).
+     * @returns {Promise<Object>} A promise that resolves with the weather forecast.
+     * @throws {Error} Throws an error if the tool execution fails.
+     */
     async execute(args) {
         try {
             Logger.info('Executing Weather Tool', args);
@@ -71,6 +91,13 @@ export class WeatherTool {
         }
     }
 
+    /**
+     * Generates a numeric hash from a string.
+     * Used to create a pseudo-random seed for consistent weather generation.
+     *
+     * @param {string} str - The input string.
+     * @returns {number} The numeric hash.
+     */
     // Helper function to generate a numeric hash from a string
     hashString(str) {
         let hash = 0;
