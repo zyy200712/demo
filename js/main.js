@@ -6,6 +6,12 @@ import { Logger } from './utils/logger.js';
 import { VideoManager } from './video/video-manager.js';
 import { ScreenRecorder } from './video/screen-recorder.js';
 
+/**
+ * @fileoverview Main entry point for the application.
+ * Initializes and manages the UI, audio, video, and WebSocket interactions.
+ */
+
+// DOM Elements
 const logsContainer = document.getElementById('logs-container');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
@@ -22,6 +28,7 @@ const screenContainer = document.getElementById('screen-container');
 const screenPreview = document.getElementById('screen-preview');
 const inputAudioVisualizer = document.getElementById('input-audio-visualizer');
 
+// State variables
 let isRecording = false;
 let audioStreamer = null;
 let audioCtx = null;
@@ -33,8 +40,14 @@ let isScreenSharing = false;
 let screenRecorder = null;
 let isUsingTool = false;
 
+// Multimodal Client
 const client = new MultimodalLiveClient({ apiKey: CONFIG.API.KEY });
 
+/**
+ * Logs a message to the UI.
+ * @param {string} message - The message to log.
+ * @param {string} [type='system'] - The type of the message (system, user, ai).
+ */
 function logMessage(message, type = 'system') {
     const logEntry = document.createElement('div');
     logEntry.classList.add('log-entry', type);
@@ -67,11 +80,19 @@ function logMessage(message, type = 'system') {
     logsContainer.scrollTop = logsContainer.scrollHeight;
 }
 
+/**
+ * Updates the microphone icon based on the recording state.
+ */
 function updateMicIcon() {
     micIcon.textContent = isRecording ? 'mic_off' : 'mic';
     micButton.style.backgroundColor = isRecording ? '#ea4335' : '#4285f4';
 }
 
+/**
+ * Updates the audio visualizer based on the audio volume.
+ * @param {number} volume - The audio volume (0.0 to 1.0).
+ * @param {boolean} [isInput=false] - Whether the visualizer is for input audio.
+ */
 function updateAudioVisualizer(volume, isInput = false) {
     const visualizer = isInput ? inputAudioVisualizer : audioVisualizer;
     const audioBar = visualizer.querySelector('.audio-bar') || document.createElement('div');
@@ -89,6 +110,10 @@ function updateAudioVisualizer(volume, isInput = false) {
     }
 }
 
+/**
+ * Initializes the audio context and streamer if not already initialized.
+ * @returns {Promise<AudioStreamer>} The audio streamer instance.
+ */
 async function ensureAudioInitialized() {
     if (!audioCtx) {
         audioCtx = new AudioContext();
@@ -102,6 +127,10 @@ async function ensureAudioInitialized() {
     return audioStreamer;
 }
 
+/**
+ * Handles the microphone toggle. Starts or stops audio recording.
+ * @returns {Promise<void>}
+ */
 async function handleMicToggle() {
     if (!isRecording) {
         try {
@@ -158,12 +187,20 @@ async function handleMicToggle() {
     }
 }
 
+/**
+ * Resumes the audio context if it's suspended.
+ * @returns {Promise<void>}
+ */
 async function resumeAudioContext() {
     if (audioCtx && audioCtx.state === 'suspended') {
         await audioCtx.resume();
     }
 }
 
+/**
+ * Connects to the WebSocket server.
+ * @returns {Promise<void>}
+ */
 async function connectToWebsocket() {
     const config = {
         model: CONFIG.API.MODEL_NAME,
@@ -207,6 +244,9 @@ async function connectToWebsocket() {
     }
 }
 
+/**
+ * Disconnects from the WebSocket server.
+ */
 function disconnectFromWebsocket() {
     client.disconnect();
     isConnected = false;
@@ -237,6 +277,9 @@ function disconnectFromWebsocket() {
     }
 }
 
+/**
+ * Handles sending a text message.
+ */
 function handleSendMessage() {
     const message = messageInput.value.trim();
     if (message) {
@@ -246,6 +289,7 @@ function handleSendMessage() {
     }
 }
 
+// Event Listeners
 client.on('open', () => {
     logMessage('WebSocket connection opened', 'system');
 });
@@ -339,6 +383,10 @@ sendButton.disabled = true;
 micButton.disabled = true;
 connectButton.textContent = 'Connect';
 
+/**
+ * Handles the video toggle. Starts or stops video streaming.
+ * @returns {Promise<void>}
+ */
 async function handleVideoToggle() {
     Logger.info('Video toggle clicked, current state:', { isVideoActive, isConnected });
     
@@ -375,6 +423,9 @@ async function handleVideoToggle() {
     }
 }
 
+/**
+ * Stops the video streaming.
+ */
 function stopVideo() {
     if (videoManager) {
         videoManager.stop();
@@ -391,6 +442,10 @@ stopVideoButton.addEventListener('click', stopVideo);
 
 cameraButton.disabled = true;
 
+/**
+ * Handles the screen share toggle. Starts or stops screen sharing.
+ * @returns {Promise<void>}
+ */
 async function handleScreenShare() {
     if (!isScreenSharing) {
         try {
@@ -425,6 +480,9 @@ async function handleScreenShare() {
     }
 }
 
+/**
+ * Stops the screen sharing.
+ */
 function stopScreenSharing() {
     if (screenRecorder) {
         screenRecorder.stop();
