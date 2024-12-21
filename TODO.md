@@ -1,1 +1,1 @@
-- Polish and document the code
+- Polish code
