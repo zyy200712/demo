@@ -10,6 +10,18 @@ export const CONFIG = {
         VERSION: 'v1alpha', // Default version for Gemini API
         MODEL_NAME: 'models/gemini-2.0-flash-exp' // Current model with Multimodal Live support
     },
+    // You can change the system instruction to your liking
+    SYSTEM_INSTRUCTION: {
+        PARTS: [
+            {
+                text: 'You are my helpful assistant. You can see and hear me, and respond with voice and text. If you are asked about things you do not know, you can use the google search tool to find the answer.',
+            },
+        ],
+    },  
+    // Model's voice
+    VOICE: {
+        NAME: 'Aoede' // You can choose one from: Puck, Charon, Kore, Fenrir, Aoede (Kore and Aoede are female voices, rest are male)
+    },  
     // Default audio settings
     AUDIO: {
         SAMPLE_RATE: 16000,

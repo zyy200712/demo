@@ -61,13 +61,13 @@ function logMessage(message, type = 'system') {
     emoji.classList.add('emoji');
     switch (type) {
         case 'system':
-            emoji.textContent = '⚙️';
+            emoji.textContent = CONFIG.UI.EMOJIS.SYSTEM;
             break;
         case 'user':
-            emoji.textContent = '🧑';
+            emoji.textContent = CONFIG.UI.EMOJIS.USER;
             break;
         case 'ai':
-            emoji.textContent = '🤖';
+            emoji.textContent = CONFIG.UI.EMOJIS.AI;
             break;
     }
     logEntry.appendChild(emoji);
@@ -207,17 +207,17 @@ async function connectToWebsocket() {
         generationConfig: {
             responseModalities: "audio",
             speechConfig: {
-                voiceConfig: { prebuiltVoiceConfig: { voiceName: "Aoede" } },
+                voiceConfig: { prebuiltVoiceConfig: { voiceName: CONFIG.VOICE.NAME } }, // You can change voice in the config.js file (see README.md)
             },
         },
         systemInstruction: {
             parts: [
                 {
-                    text: 'You are my helpful assistant. You can see and hear me, and respond with voice and text. If you are asked about things you do not know, you can use the google search tool to find the answer.',
+                    text: CONFIG.SYSTEM_INSTRUCTION.TEXT    // You can change system instruction in the config.js file (also see README.md)
                 },
-            ],
+            ]
         }
-    };
+    };  
 
     try {
         await client.connect(config);
