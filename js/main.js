@@ -176,7 +176,6 @@ async function handleMicToggle() {
             updateMicIcon();
         }
     } else {
-        audioStreamer?.stop();
         if (audioRecorder && isRecording) {
             audioRecorder.stop();
         }
