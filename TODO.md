@@ -3,3 +3,4 @@
 - Add feature to enable/disable tools
 - Add feature to hide console logs
 - There are some bugs, create issues for them
+- Optimize screen sharing or anything so that model can see both screen and camera without low performance
