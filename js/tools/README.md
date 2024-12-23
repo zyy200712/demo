@@ -6,14 +6,15 @@ This guide explains how to extend the functionality of the Gemini API client by 
 
 Each tool is defined as a JavaScript class with two main methods:
 
-*   `getDeclaration()`: Returns the tool's declaration, which describes the function's name, parameters, and purpose to the Gemini API.
-*   `execute(args)`: Contains the actual implementation of the tool's functionality. It takes an object `args` containing the parameters provided by the Gemini API and returns the result of the function call. Read more in [Google's official documentation](https://ai.google.dev/gemini-api/docs/function-calling).
+* `getDeclaration()`: Returns the tool's declaration, which describes the function's name, parameters, and purpose to the Gemini API.
+* `execute(args)`: Contains the actual implementation of the tool's functionality. It takes an object `args` containing the parameters provided by the Gemini API and returns the result of the function call. Read more in [Google's official documentation](https://ai.google.dev/gemini-api/docs/function-calling).
 
 ## Steps to Add a Custom Tool
 
 1. **Create a new JavaScript file** for your tool inside the `js/tools` directory. Name the file appropriately, e.g., `my-custom-tool.js`.
 
 2. **Define your tool class** in the new file. For example:
+
     ```javascript
     import { Logger } from '../utils/logger.js';
 
@@ -53,6 +54,7 @@ Each tool is defined as a JavaScript class with two main methods:
     }    ```
 
 3. **Register your tool** in `js/tools/tool-manager.js`:
+
     ```javascript
     import { MyCustomTool } from './my-custom-tool.js';
 
@@ -86,7 +88,7 @@ The `weather-tool.js` file demonstrates a mock implementation of a weather tool.
 
 ## Important Considerations
 
-*   **Error Handling:** Implement proper error handling in your `execute` method to catch and handle potential issues.
-*   **Logging:** Use the `Logger` utility to log important events and debug information.
-*   **Asynchronous Operations:** If your tool performs asynchronous operations (e.g., network requests), make sure your `execute` method is `async` and use `await` to handle promises.
-*   **Security:** Be mindful of security implications when integrating with external APIs or services. Avoid exposing sensitive information in your tool's implementation or logs.
+* **Error Handling:** Implement proper error handling in your `execute` method to catch and handle potential issues.
+* **Logging:** Use the `Logger` utility to log important events and debug information.
+* **Asynchronous Operations:** If your tool performs asynchronous operations (e.g., network requests), make sure your `execute` method is `async` and use `await` to handle promises.
+* **Security:** Be mindful of security implications when integrating with external APIs or services. Avoid exposing sensitive information in your tool's implementation or logs.
