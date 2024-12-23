@@ -113,7 +113,7 @@ export class MultimodalLiveClient extends EventEmitter {
                         }
                     }
                     this.log(`server.${ev.type}`, `Disconnected ${reason ? `with reason: ${reason}` : ''}`);
-                    this.emit('close', ev);
+                    this.emit('close', { code: ev.code, reason });
                 });
                 resolve(true);
             });

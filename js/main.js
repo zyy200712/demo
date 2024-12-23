@@ -206,15 +206,18 @@ async function connectToWebsocket() {
         generationConfig: {
             responseModalities: "audio",
             speechConfig: {
-                voiceConfig: { prebuiltVoiceConfig: { voiceName: CONFIG.VOICE.NAME } }, // You can change voice in the config.js file (see README.md)
+                voiceConfig: { 
+                    prebuiltVoiceConfig: { 
+                        voiceName: CONFIG.VOICE.NAME    // You can change voice in the config.js file
+                    }
+                }
             },
+
         },
         systemInstruction: {
-            parts: [
-                {
-                    text: CONFIG.SYSTEM_INSTRUCTION.TEXT    // You can change system instruction in the config.js file (also see README.md)
-                },
-            ]
+            parts: [{
+                text: CONFIG.SYSTEM_INSTRUCTION.TEXT     // You can change system instruction in the config.js file also
+            }],
         }
     };  
 
@@ -231,7 +234,9 @@ async function connectToWebsocket() {
         screenButton.disabled = false;
         logMessage('Connected to Gemini 2.0 Flash Multimodal Live API', 'system');
     } catch (error) {
-        logMessage(`Connection error: ${error.message}`, 'system');
+        const errorMessage = error.message || 'Unknown error';
+        Logger.error('Connection error:', error);
+        logMessage(`Connection error: ${errorMessage}`, 'system');
         isConnected = false;
         connectButton.textContent = 'Connect';
         connectButton.classList.remove('connected');
