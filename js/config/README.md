@@ -1,4 +1,4 @@
-## Create config.js file here but make sure to add it to the .gitignore file
+# Create config.js file here but make sure to add it to the .gitignore file
 
 ```javascript
 
