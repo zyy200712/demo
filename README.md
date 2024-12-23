@@ -4,6 +4,10 @@ A lightweight vanilla JavaScript implementation of the Gemini 2.0 Flash Multimod
 
 This is a simplified version of [Google's original React implementation](https://github.com/google-gemini/multimodal-live-api-web-console), created in response to [this issue](https://github.com/google-gemini/multimodal-live-api-web-console/issues/19).
 
+## Live Demo on GitHub Pages
+
+[Live Demo](https://viaanthroposbenevolentia.github.io/gemini-2-live-api-demo/)
+
 ## Key Features
 
 - Real-time text chat with Gemini API
