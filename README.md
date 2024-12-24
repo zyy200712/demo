@@ -27,19 +27,23 @@ This is a simplified version of [Google's original React implementation](https:/
 
 1. Clone the repository
 2. Set up your API key:
+
    ```bash
    cp js/config/config.example.js js/config/config.js
    # Edit js/config/config.js with your API key
    ```
+
 3. Start the development server:
+
    ```bash
    python -m http.server 8000
    ```
+
 4. Access the application at `http://localhost:8000`
 
 ## Project Structure
 
-```
+```plaintext
 ├── js/
 │ ├── audio/ # Audio processing and management
 │ ├── config/ # Configuration files
