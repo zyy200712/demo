@@ -61,13 +61,13 @@ function logMessage(message, type = 'system') {
     emoji.classList.add('emoji');
     switch (type) {
         case 'system':
-            emoji.textContent = CONFIG.UI.EMOJIS.SYSTEM;
+            emoji.textContent = '⚙️';
             break;
         case 'user':
-            emoji.textContent = CONFIG.UI.EMOJIS.USER;
+            emoji.textContent = '🧑';
             break;
         case 'ai':
-            emoji.textContent = CONFIG.UI.EMOJIS.AI;
+            emoji.textContent = '🤖';
             break;
     }
     logEntry.appendChild(emoji);
@@ -146,7 +146,7 @@ async function handleMicToggle() {
                     client.sendRealtimeInput([{
                         mimeType: "audio/pcm;rate=16000",
                         data: base64Data,
-                        interrupt: true
+                        interrupt: true     // Model isn't interruptable when using tools, so we do it manually
                     }]);
                 } else {
                     client.sendRealtimeInput([{
@@ -216,7 +216,7 @@ async function connectToWebsocket() {
         },
         systemInstruction: {
             parts: [{
-                text: CONFIG.SYSTEM_INSTRUCTION.TEXT     // You can change system instruction in the config.js file also
+                text: CONFIG.SYSTEM_INSTRUCTION.TEXT     // You can change system instruction in the config.js file
             }],
         }
     };  

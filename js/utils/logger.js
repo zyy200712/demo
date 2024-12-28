@@ -79,17 +79,6 @@ export class Logger extends EventEmitter {
     }
 
     /**
-     * Log levels.
-     * @enum {string}
-     */
-    static LEVELS = {
-        DEBUG: 'debug',
-        INFO: 'info',
-        WARN: 'warn',
-        ERROR: 'error'
-    };
-
-    /**
      * Logs a debug message.
      *
      * @param {string} message - The message to log.

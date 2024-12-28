@@ -19,19 +19,6 @@ export const CONFIG = {
         BUFFER_SIZE: 2048,
         CHANNELS: 1
     },
-    // UI settings
-    UI: {
-        LOG_LEVELS: {
-            SYSTEM: 'system',
-            USER: 'user',
-            AI: 'ai'
-        },
-        EMOJIS: {
-            SYSTEM: '⚙️',
-            USER: '🧑',
-            AI: '🤖'
-        }
-    },
     // If you are working in the RoArm branch 
     // ROARM: {
     //     IP_ADDRESS: '192.168.1.4'
