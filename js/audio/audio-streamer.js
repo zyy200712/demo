@@ -1,4 +1,5 @@
 import { registeredWorklets } from '../core/worklet-registry.js';
+import { CONFIG } from '../config/config.js';
 
 /**
  * @class AudioStreamer
@@ -13,7 +14,7 @@ export class AudioStreamer {
         this.context = context;
         this.audioQueue = [];
         this.isPlaying = false;
-        this.sampleRate = 24000;
+        this.sampleRate = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE;
         this.bufferSize = 7680;
         this.processingBuffer = new Float32Array(0);
         this.scheduledTime = 0;
