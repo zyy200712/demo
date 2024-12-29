@@ -21,7 +21,7 @@ This is a simplified version of [Google's original React implementation](https:/
 
 - Modern web browser with WebRTC, WebSocket, and Web Audio API support
 - Google AI Studio API key
-- Python 3.0+ (for local development server)
+- Python 3.0+ OR `npx http-server` (for local development server)
 
 ## Quick Start
 
@@ -37,6 +37,12 @@ This is a simplified version of [Google's original React implementation](https:/
 
    ```bash
    python -m http.server 8000
+   ```
+
+   or 
+   
+   ```bash
+   npx http-server 8000
    ```
 
 4. Access the application at `http://localhost:8000`
