@@ -72,12 +72,6 @@ This is a simplified version of [Google's original React implementation](https:/
 
 Custom tools can be added to extend functionality. See `js/tools/README.md` for implementation details.
 
-### Security Notes
-
-- Keep your API key private
-- Add `js/config/config.js` to `.gitignore`
-- Follow security best practices when handling user media streams
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues and pull requests.
