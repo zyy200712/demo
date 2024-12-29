@@ -64,7 +64,7 @@ function logMessage(message, type = 'system') {
             emoji.textContent = '⚙️';
             break;
         case 'user':
-            emoji.textContent = '🧑';
+            emoji.textContent = '🫵';
             break;
         case 'ai':
             emoji.textContent = '🤖';
