@@ -6,3 +6,4 @@
 - Add feature to hide console logs
 - There are some bugs, create issues for them
 - Optimize screen sharing or anything so that model can see both screen and camera without low performance
+- Ignore all TODO's as this is just a demo repo
