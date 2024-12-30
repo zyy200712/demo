@@ -277,54 +277,11 @@ async function resumeAudioContext() {
     }
 }
 
-
-
-/**
- * Handles the API key management
- */
-function handleApiKey() {
-    apiKey = localStorage.getItem('gemini_api_key');
-    if (!apiKey) {
-        apiKeyContainer.style.display = 'block';
-        connectButton.disabled = true;
-    } else {
-        apiKeyContainer.style.display = 'none';
-        connectButton.disabled = false;
-        CONFIG.API.KEY = apiKey;
-    }
-}
-
-/**
- * Saves the API key to localStorage
- */
-function saveApiKey() {
-    const newApiKey = apiKeyInput.value.trim();
-    if (newApiKey) {
-        apiKey = newApiKey;
-        localStorage.setItem('gemini_api_key', apiKey);
-        CONFIG.API.KEY = apiKey;
-        apiKeyContainer.style.display = 'none';
-        connectButton.disabled = false;
-        apiKeyInput.value = '';
-        logMessage('API key saved successfully', 'system');
-    }
-}
-
 /**
  * Connects to the WebSocket server.
  * @returns {Promise<void>}
  */
 async function connectToWebsocket() {
-    handleApiKey();
-
-    if (!CONFIG.API.KEY) {
-        logMessage('Please enter your API key first', 'system');
-        apiKeyContainer.style.display = 'block';
-        return;
-    }
-
-    client = new MultimodalLiveClient({ apiKey: CONFIG.API.KEY });
-
     const config = {
         model: CONFIG.API.MODEL_NAME,
         generationConfig: {
@@ -635,6 +592,94 @@ apiKeyInput.addEventListener('keypress', (event) => {
 
 handleApiKey(); // Call this when the page loads
   
+/**
+ * Initializes the audio context and streamer if not already initialized.
+ * @returns {Promise<AudioStreamer>} The audio streamer instance.
+ */
+async function ensureAudioInitialized() {
+    if (!audioCtx) {
+        audioCtx = new AudioContext();
+    }
+    if (!audioStreamer) {
+        audioStreamer = new AudioStreamer(audioCtx);
+        // Set the sample rate before initializing the worklet
+        audioStreamer.sampleRate = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE;
+        await audioStreamer.addWorklet('vumeter-out', 'js/audio/worklets/vol-meter.js', (ev) => {
+            updateAudioVisualizer(ev.data.volume);
+        });
+    }
+    return audioStreamer;
+}
+
+/**
+ * Handles the microphone toggle. Starts or stops audio recording.
+ * @returns {Promise<void>}
+ */
+async function handleMicToggle() {
+    if (!isRecording) {
+        try {
+            await ensureAudioInitialized();
+            audioRecorder = new AudioRecorder();
+            
+            const inputAnalyser = audioCtx.createAnalyser();
+            inputAnalyser.fftSize = 256;
+            const inputDataArray = new Uint8Array(inputAnalyser.frequencyBinCount);
+            
+            await audioRecorder.start((base64Data) => {
+                if (isUsingTool) {
+                    client.sendRealtimeInput([{
+                        mimeType: "audio/pcm;rate=16000",
+                        data: base64Data,
+                        interrupt: true
+                    }]);
+                } else {
+                    client.sendRealtimeInput([{
+                        mimeType: "audio/pcm;rate=16000",
+                        data: base64Data
+                    }]);
+                }
+                
+                inputAnalyser.getByteFrequencyData(inputDataArray);
+                const inputVolume = Math.max(...inputDataArray) / 255;
+                updateAudioVisualizer(inputVolume, true);
+            });
+
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const source = audioCtx.createMediaStreamSource(stream);
+            source.connect(inputAnalyser);
+            
+            await audioStreamer.resume();
+            isRecording = true;
+            Logger.info('Microphone started');
+            logMessage('Microphone started', 'system');
+            updateMicIcon();
+        } catch (error) {
+            Logger.error('Microphone error:', error);
+            logMessage(`Error: ${error.message}`, 'system');
+            isRecording = false;
+            updateMicIcon();
+        }
+    } else {
+        if (audioRecorder && isRecording) {
+            audioRecorder.stop();
+        }
+        isRecording = false;
+        logMessage('Microphone stopped', 'system');
+        updateMicIcon();
+        updateAudioVisualizer(0, true);
+    }
+}
+
+/**
+ * Resumes the audio context if it's suspended.
+ * @returns {Promise<void>}
+ */
+async function resumeAudioContext() {
+    if (audioCtx && audioCtx.state === 'suspended') {
+        await audioCtx.resume();
+    }
+}
+
 // Handle configuration panel toggle
 configToggle.addEventListener('click', () => {
     configContainer.classList.toggle('active');
