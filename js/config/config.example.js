@@ -15,9 +15,9 @@ export const CONFIG = {
     },
     // Default audio settings
     AUDIO: {
-        INPUT_SAMPLE_RATE: 16000,
-        OUTPUT_SAMPLE_RATE: 24000,      // Lowering this will produce tired and fun voice. Lowering to <8000 will horrify you xd
-        BUFFER_SIZE: 7680,
+        SAMPLE_RATE: 16000,
+        OUTPUT_SAMPLE_RATE: 24000,      // If you want to have fun, set this to around 14000 (u certainly will)
+        BUFFER_SIZE: 2048,
         CHANNELS: 1
     },
     // If you are working in the RoArm branch 

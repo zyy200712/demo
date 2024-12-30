@@ -12,7 +12,7 @@ export class AudioRecorder {
      * @constructor
      * @param {number} sampleRate - The sample rate for audio recording (default: 16000)
      */
-    constructor(sampleRate = CONFIG.AUDIO.INPUT_SAMPLE_RATE) {
+    constructor(sampleRate = CONFIG.AUDIO.SAMPLE_RATE) {
         this.sampleRate = sampleRate;
         this.stream = null;
         this.mediaRecorder = null;
