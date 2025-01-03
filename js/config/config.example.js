@@ -15,9 +15,9 @@ export const CONFIG = {
     },
     // Default audio settings
     AUDIO: {
-        SAMPLE_RATE: 16000,
+        INPUT_SAMPLE_RATE: 16000,
         OUTPUT_SAMPLE_RATE: 24000,      // If you want to have fun, set this to around 14000 (u certainly will)
-        BUFFER_SIZE: 2048,
+        BUFFER_SIZE: 7680,
         CHANNELS: 1
     },
     // If you are working in the RoArm branch 

@@ -9,6 +9,23 @@
 </head>
 <body>
     <div id="app">
+        <div id="config-container">
+            <div class="config-wrapper">
+                <select id="voice-select">
+                    <option value="Puck">Puck (Male)</option>
+                    <option value="Charon">Charon (Male)</option>
+                    <option value="Kore">Kore (Female)</option>
+                    <option value="Fenrir">Fenrir (Male)</option>
+                    <option value="Aoede">Aoede (Female)</option>
+                </select>
+                <div class="sample-rate-container">
+                    <input type="number" id="sample-rate-input" placeholder="Sample Rate (Hz)" min="8000" max="48000" step="1000">
+                    <span class="sample-rate-help">up for high pitch, down for low</span>
+                </div>
+                <textarea id="system-instruction" placeholder="Enter custom system instructions..." rows="3"></textarea>
+                <button id="apply-config">Apply Settings</button>
+            </div>
+        </div>
         <button id="connect-button">Connect</button>
         <div id="logs-container"></div>
         <input type="text" id="message-input" placeholder="Enter message...">

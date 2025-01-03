@@ -27,6 +27,10 @@ const screenIcon = document.getElementById('screen-icon');
 const screenContainer = document.getElementById('screen-container');
 const screenPreview = document.getElementById('screen-preview');
 const inputAudioVisualizer = document.getElementById('input-audio-visualizer');
+const voiceSelect = document.getElementById('voice-select');
+const sampleRateInput = document.getElementById('sample-rate-input');
+const systemInstructionInput = document.getElementById('system-instruction');
+const applyConfigButton = document.getElementById('apply-config');
 
 // State variables
 let isRecording = false;
@@ -42,6 +46,71 @@ let isUsingTool = false;
 
 // Multimodal Client
 const client = new MultimodalLiveClient({ apiKey: CONFIG.API.KEY });
+
+// Initialize configuration values
+voiceSelect.value = CONFIG.VOICE.NAME;
+sampleRateInput.value = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE;
+systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
+
+/**
+ * Updates the configuration and reconnects if connected
+ */
+async function updateConfiguration() {
+    const newVoice = voiceSelect.value;
+    const newSampleRate = parseInt(sampleRateInput.value);
+    const newInstruction = systemInstructionInput.value.trim();
+
+    // Validate sample rate
+    if (isNaN(newSampleRate) || newSampleRate < 1000 || newSampleRate > 48000) {
+        logMessage('Invalid sample rate. Must be between 1000 and 48000 Hz.', 'system');
+        return;
+    }
+
+    // Update configuration
+    CONFIG.VOICE.NAME = newVoice;
+    CONFIG.AUDIO.OUTPUT_SAMPLE_RATE = newSampleRate;
+    CONFIG.SYSTEM_INSTRUCTION.TEXT = newInstruction;
+
+    // Save to localStorage
+    localStorage.setItem('gemini_voice', newVoice);
+    localStorage.setItem('gemini_output_sample_rate', newSampleRate.toString());
+    localStorage.setItem('gemini_system_instruction', newInstruction);
+
+    // If we have an active audio streamer, stop it
+    if (audioStreamer) {
+        audioStreamer.stop();
+        audioStreamer = null;
+    }
+
+    // If connected, reconnect to apply changes
+    if (isConnected) {
+        logMessage('Reconnecting to apply configuration changes...', 'system');
+        await disconnectFromWebsocket();
+        await connectToWebsocket();
+    }
+
+    logMessage('Configuration updated successfully', 'system');
+}
+
+// Load saved configuration if exists
+if (localStorage.getItem('gemini_voice')) {
+    CONFIG.VOICE.NAME = localStorage.getItem('gemini_voice');
+    voiceSelect.value = CONFIG.VOICE.NAME;
+}
+
+if (localStorage.getItem('gemini_output_sample_rate')) {
+    CONFIG.AUDIO.OUTPUT_SAMPLE_RATE = parseInt(localStorage.getItem('gemini_output_sample_rate'));
+    sampleRateInput.value = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE;
+}
+
+if (localStorage.getItem('gemini_system_instruction')) {
+    CONFIG.SYSTEM_INSTRUCTION.TEXT = localStorage.getItem('gemini_system_instruction');
+    systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
+}
+
+// Add event listener for configuration changes
+applyConfigButton.addEventListener('click', updateConfiguration);
+
 
 /**
  * Logs a message to the UI.
@@ -120,6 +189,7 @@ async function ensureAudioInitialized() {
     }
     if (!audioStreamer) {
         audioStreamer = new AudioStreamer(audioCtx);
+        audioStreamer.sampleRate = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE;     // Set the sample rate before initializing the worklet
         await audioStreamer.addWorklet('vumeter-out', 'js/audio/worklets/vol-meter.js', (ev) => {
             updateAudioVisualizer(ev.data.volume);
         });
