@@ -32,6 +32,12 @@ export class ScreenRecorder {
             ...options
         };
         this.frameCount = 0;
+        
+        // Motion detection properties
+        this.lastFrameData = null;
+        this.lastSignificantFrame = null;
+        this.MOTION_THRESHOLD = 5; // Lower threshold for screen changes
+        this.FORCE_FRAME_INTERVAL = 15; // Send frame every N frames regardless of motion
     }
 
     /**
@@ -46,7 +52,7 @@ export class ScreenRecorder {
             this.previewElement = previewElement;
 
             // Request screen sharing access with audio
-            this.stream = await navigator.mediaDevices.getDisplayMedia({ 
+            this.stream = await navigator.mediaDevices.getDisplayMedia({
                 video: {
                     width: { ideal: this.options.width },
                     height: { ideal: this.options.height },
@@ -77,7 +83,7 @@ export class ScreenRecorder {
             // Start frame capture loop
             this.isRecording = true;
             this.startFrameCapture();
-            
+
             // Handle stream stop
             this.stream.getVideoTracks()[0].addEventListener('ended', () => {
                 this.stop();
@@ -107,10 +113,10 @@ export class ScreenRecorder {
      */
     startFrameCapture() {
         const frameInterval = 1000 / this.options.fps;
-        
+
         this.captureInterval = setInterval(() => {
             if (!this.isRecording || !this.previewElement || !this.onScreenData) return;
-            
+
             try {
                 // Ensure video is playing and ready
                 if (this.previewElement.readyState >= this.previewElement.HAVE_CURRENT_DATA) {
@@ -128,14 +134,42 @@ export class ScreenRecorder {
                         this.frameCanvas.height
                     );
 
-                    // Convert to JPEG with quality setting
-                    const jpegData = this.frameCanvas.toDataURL('image/jpeg', this.options.quality);
-                    const base64Data = jpegData.split(',')[1];
-                    
-                    if (this.validateFrame(base64Data)) {
-                        this.frameCount++;
-                        Logger.debug(`Screen frame #${this.frameCount} captured`);
-                        this.onScreenData(base64Data);
+                    // Get current frame data for motion detection
+                    const currentFrameData = this.frameCtx.getImageData(
+                        0, 0,
+                        this.frameCanvas.width,
+                        this.frameCanvas.height
+                    ).data;
+
+                    let shouldSendFrame = false;
+
+                    // Check for motion if we have a previous frame
+                    if (this.lastFrameData) {
+                        const motionScore = this.detectMotion(this.lastFrameData, currentFrameData);
+                        shouldSendFrame = motionScore > this.MOTION_THRESHOLD ||
+                                       this.frameCount % this.FORCE_FRAME_INTERVAL === 0;
+
+                        if (!shouldSendFrame) {
+                            Logger.debug(`Skipping screen frame - low motion (score: ${motionScore.toFixed(2)})`);
+                            this.frameCount++;
+                            return;
+                        }
+                    } else {
+                        // Always send first frame
+                        shouldSendFrame = true;
+                    }
+
+                    if (shouldSendFrame) {
+                        // Convert to JPEG with quality setting
+                        const jpegData = this.frameCanvas.toDataURL('image/jpeg', this.options.quality);
+                        const base64Data = jpegData.split(',')[1];
+
+                        if (this.validateFrame(base64Data)) {
+                            this.frameCount++;
+                            Logger.debug(`Screen frame #${this.frameCount} captured (motion detected)`);
+                            this.onScreenData(base64Data);
+                            this.lastFrameData = currentFrameData;
+                        }
                     }
                 }
             } catch (error) {
@@ -143,7 +177,7 @@ export class ScreenRecorder {
             }
         }, frameInterval);
 
-        Logger.info(`Screen capture started at ${this.options.fps} FPS`);
+        Logger.info(`Screen capture started at ${this.options.fps} FPS with motion detection`);
     }
 
     /**
@@ -153,7 +187,7 @@ export class ScreenRecorder {
     stop() {
         try {
             this.isRecording = false;
-            
+
             if (this.captureInterval) {
                 clearInterval(this.captureInterval);
                 this.captureInterval = null;
@@ -168,6 +202,11 @@ export class ScreenRecorder {
                 this.previewElement.srcObject = null;
                 this.previewElement = null;
             }
+
+            // Clear motion detection state
+            this.lastFrameData = null;
+            this.lastSignificantFrame = null;
+            this.frameCount = 0;
 
             Logger.info('Screen recording stopped');
 
@@ -192,12 +231,12 @@ export class ScreenRecorder {
             Logger.error('Invalid screen frame base64 data');
             return false;
         }
-        
+
         if (base64Data.length < 1024) {
             Logger.error('Screen frame too small');
             return false;
         }
-        
+
         return true;
     }
 
@@ -216,4 +255,26 @@ export class ScreenRecorder {
         }
         return true;
     }
-} 
+
+    /**
+     * Detects motion between two frames.
+     * @param {Uint8ClampedArray} prevFrame - The previous frame data.
+     * @param {Uint8ClampedArray} currentFrame - The current frame data.
+     * @returns {number} The motion score between the two frames.
+     * @private
+     */
+    detectMotion(prevFrame, currentFrame) {
+        let diff = 0;
+        const pixelsToCheck = prevFrame.length / 4;
+        const skipPixels = 4; // Skip more pixels for performance since screens have more pixels
+
+        for (let i = 0; i < prevFrame.length; i += 4 * skipPixels) {
+            const rDiff = Math.abs(prevFrame[i] - currentFrame[i]);
+            const gDiff = Math.abs(prevFrame[i + 1] - currentFrame[i + 1]);
+            const bDiff = Math.abs(prevFrame[i + 2] - currentFrame[i + 2]);
+            diff += (rDiff + gDiff + bDiff) / 3;
+        }
+
+        return diff / (pixelsToCheck / skipPixels);
+    }
+}
