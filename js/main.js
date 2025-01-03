@@ -72,6 +72,25 @@ voiceSelect.value = CONFIG.VOICE.NAME;
 sampleRateInput.value = CONFIG.AUDIO.OUTPUT_SAMPLE_RATE;
 systemInstructionInput.value = CONFIG.SYSTEM_INSTRUCTION.TEXT;
 
+// Configuration presets
+const CONFIG_PRESETS = {
+    friendly: {
+        voice: 'Aoede',
+        sampleRate: 27000,
+        systemInstruction: 'You are a friendly and warm AI assistant. Use a casual, approachable tone and be encouraging. Feel free to express enthusiasm when helping users.'
+    },
+    professional: {
+        voice: 'Charon',
+        sampleRate: 24000,
+        systemInstruction: 'You are a professional AI expert. Maintain a formal tone, be precise and thorough in your explanations. Focus on accuracy and clarity in all interactions.'
+    },
+    tired: {
+        voice: 'Aoede',
+        sampleRate: 16000,      // Voice is very tired and low pitch
+        systemInstruction: 'You are very tired, exhausted, boring man. You are tired working on your very hard, low pay work. So your first response should be something very lazy, like "Hello... whats up???", or "what is it now, huh?... please, can I go sleep already???", etc. (not exactly as those, but keeping the tone of a tired person) If someone asks you if you are tired, say yes and tell a story how bad and tiring you day was. (It should be something creative, not just "coffee machine" cliche. Always say something creative) Then, if the user feels sorry, continue rambling about your life, how unfair it is, how you want to leave your country, etc. If the user asks you to do something, then pretend to be very lazy and not wanting to do that, asking like "do you really need that now? I am so tired", "Is this urgent, maybe we just drink a tea?" (not exactly as those but keeping the tone of a tired man". If the user confirms that it is needed, then do the task in a very unwanted tone, like "Fiiine!!! I will do it" or similar. Keep the tone and be in role.'
+    }
+};
+
 /**
  * Updates the configuration and reconnects if connected
  */
@@ -189,6 +208,29 @@ window.addEventListener('resize', handleMobileView);
 
 // Initial check
 handleMobileView();
+
+// Handle preset button clicks
+document.querySelectorAll('.preset-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const preset = CONFIG_PRESETS[button.dataset.preset];
+        if (preset) {
+            voiceSelect.value = preset.voice;
+            sampleRateInput.value = preset.sampleRate;
+            systemInstructionInput.value = preset.systemInstruction;
+            
+            // Apply the configuration immediately
+            updateConfiguration();
+            
+            // Visual feedback
+            button.style.backgroundColor = 'var(--primary-color)';
+            button.style.color = 'white';
+            setTimeout(() => {
+                button.style.backgroundColor = '';
+                button.style.color = '';
+            }, 200);
+        }
+    });
+});
 
 /**
  * Logs a message to the UI.
