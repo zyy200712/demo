@@ -36,6 +36,22 @@ const toggleLogs = document.getElementById('toggle-logs');
 const logsWrapper = document.querySelector('.logs-wrapper');
 const configContainer = document.getElementById('config-container');
 
+// Theme switcher
+const themeToggle = document.getElementById('theme-toggle');
+const root = document.documentElement;
+// Set initial theme from localStorage or default to dark
+const savedTheme = localStorage.getItem('theme') || 'dark';
+root.setAttribute('data-theme', savedTheme);
+themeToggle.textContent = savedTheme === 'dark' ? 'light_mode' : 'dark_mode';
+themeToggle.addEventListener('click', () => {
+    const currentTheme = root.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    root.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeToggle.textContent = newTheme === 'dark' ? 'light_mode' : 'dark_mode';
+});
+
 // State variables
 let isRecording = false;
 let audioStreamer = null;
