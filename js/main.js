@@ -31,6 +31,10 @@ const voiceSelect = document.getElementById('voice-select');
 const sampleRateInput = document.getElementById('sample-rate-input');
 const systemInstructionInput = document.getElementById('system-instruction');
 const applyConfigButton = document.getElementById('apply-config');
+const configToggle = document.getElementById('config-toggle');
+const toggleLogs = document.getElementById('toggle-logs');
+const logsWrapper = document.querySelector('.logs-wrapper');
+const configContainer = document.getElementById('config-container');
 
 // State variables
 let isRecording = false;
@@ -90,6 +94,12 @@ async function updateConfiguration() {
     }
 
     logMessage('Configuration updated successfully', 'system');
+    
+    // Close the config panel on mobile after applying settings
+    if (window.innerWidth <= 768) {
+        configContainer.classList.remove('active');
+        configToggle.classList.remove('active');
+    }
 }
 
 // Load saved configuration if exists
@@ -111,6 +121,58 @@ if (localStorage.getItem('gemini_system_instruction')) {
 // Add event listener for configuration changes
 applyConfigButton.addEventListener('click', updateConfiguration);
 
+
+// Handle configuration panel toggle
+configToggle.addEventListener('click', () => {
+    configContainer.classList.toggle('active');
+    configToggle.classList.toggle('active');
+});
+
+// Close config panel when clicking outside (for desktop)
+document.addEventListener('click', (event) => {
+    if (!configContainer.contains(event.target) && 
+        !configToggle.contains(event.target) && 
+        window.innerWidth > 768) {
+        configContainer.classList.remove('active');
+        configToggle.classList.remove('active');
+    }
+});
+
+// Prevent clicks inside config panel from closing it
+configContainer.addEventListener('click', (event) => {
+    event.stopPropagation();
+});
+
+// Close config panel on escape key
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        configContainer.classList.remove('active');
+        configToggle.classList.remove('active');
+    }
+});
+
+// Handle logs collapse/expand
+toggleLogs.addEventListener('click', () => {
+    logsWrapper.classList.toggle('collapsed');
+    toggleLogs.textContent = logsWrapper.classList.contains('collapsed') ? 'expand_more' : 'expand_less';
+});
+
+// Collapse logs by default on mobile
+function handleMobileView() {
+    if (window.innerWidth <= 768) {
+        logsWrapper.classList.add('collapsed');
+        toggleLogs.textContent = 'expand_more';
+    } else {
+        logsWrapper.classList.remove('collapsed');
+        toggleLogs.textContent = 'expand_less';
+    }
+}
+
+// Listen for window resize
+window.addEventListener('resize', handleMobileView);
+
+// Initial check
+handleMobileView();
 
 /**
  * Logs a message to the UI.

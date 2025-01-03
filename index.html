@@ -9,7 +9,15 @@
 </head>
 <body>
     <div id="app">
-        <div id="config-container">
+
+        <!-- Main Controls -->
+        <div class="main-controls">
+            <button id="connect-button">Connect</button>
+            <button id="config-toggle" class="material-symbols-outlined">settings</button>
+        </div>
+
+        <!-- Configuration Panel (Hidden by default on mobile) -->
+        <div id="config-container" class="hidden-mobile">
             <div class="config-wrapper">
                 <select id="voice-select">
                     <option value="Puck">Puck (Male)</option>
@@ -26,19 +34,36 @@
                 <button id="apply-config">Apply Settings</button>
             </div>
         </div>
-        <button id="connect-button">Connect</button>
-        <div id="logs-container"></div>
-        <input type="text" id="message-input" placeholder="Enter message...">
-        <button id="send-button">Send</button>
-        <button id="mic-button">
-            <span id="mic-icon" class="material-symbols-outlined">mic</span>
-        </button>
-        <button id="camera-button">
-            <span id="camera-icon" class="material-symbols-outlined">videocam</span>
-        </button>
-        <button id="screen-button">
-            <span id="screen-icon" class="material-symbols-outlined">screen_share</span>
-        </button>
+
+        <!-- Chat Interface -->
+        <div class="chat-interface">
+            <!-- Logs Container (Collapsible on mobile) -->
+            <div class="logs-wrapper">
+                <div class="logs-header">
+                    <span>Chat History</span>
+                    <button id="toggle-logs" class="material-symbols-outlined">expand_more</button>
+                </div>
+                <div id="logs-container"></div>
+            </div>
+            <!-- Input Controls -->
+            <div class="input-controls">
+                <input type="text" id="message-input" placeholder="Enter message...">
+                <div class="action-buttons">
+                    <button id="send-button">Send</button>
+                    <button id="mic-button">
+                        <span id="mic-icon" class="material-symbols-outlined">mic</span>
+                    </button>
+                    <button id="camera-button">
+                        <span id="camera-icon" class="material-symbols-outlined">videocam</span>
+                    </button>
+                    <button id="screen-button">
+                        <span id="screen-icon" class="material-symbols-outlined">screen_share</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Visualizers -->
         <div class="audio-visualizers">
             <div class="visualizer-container">
                 <label>Input Audio</label>
@@ -49,6 +74,8 @@
                 <div id="audio-visualizer"></div>
             </div>
         </div>
+
+        <!-- Video/Screen Preview Containers -->
         <div id="video-container" style="display: none;">
             <video id="preview" playsinline autoplay muted></video>
             <div class="video-controls">
