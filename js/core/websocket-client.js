@@ -21,7 +21,7 @@ export class MultimodalLiveClient extends EventEmitter {
      */
     constructor({ url, apiKey }) {
         super();
-        this.url = url || `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=${apiKey}`;
+        this.url = url || `wss://gem.y07.us.kg/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=${apiKey}`;
         this.ws = null;
         this.config = null;
         this.send = this.send.bind(this);
